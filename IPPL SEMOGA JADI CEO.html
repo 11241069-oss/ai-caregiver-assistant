@@ -1,0 +1,1136 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Caregiver Assistant</title>
+
+<style>
+:root {
+    --ungu: #896bd4;
+    --ungu-tua: #392765;
+    --ungu-muda: #eee7ff;
+    --latar: #f6f2ff;
+    --putih: #ffffff;
+    --teks: #382b5c;
+    --abu: #817994;
+    --garis: #e4dcf5;
+    --merah: #c94f68;
+    --hijau: #27876b;
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--latar);
+    color: var(--teks);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+.login-wrap {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 32px;
+    border-radius: 24px;
+    border: 1px solid var(--garis);
+}
+.logo {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    background: var(--ungu-muda);
+    border-radius: 18px;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+.login-card h1 { font-size: 25px; }
+.muted { color: var(--abu); line-height: 1.6; }
+.small { font-size: 13px; }
+
+.app-header {
+    background: white;
+    padding: 22px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--garis);
+}
+.brand h1 {
+    font-size: 22px;
+    margin: 0 0 6px;
+    color: var(--ungu);
+}
+.brand p { margin: 0; color: var(--abu); font-size: 13px; }
+
+.layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    min-height: calc(100vh - 90px);
+}
+.sidebar {
+    padding: 22px 15px;
+    background: white;
+    border-right: 1px solid var(--garis);
+}
+.nav-button {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 7px;
+    text-align: left;
+    color: var(--teks);
+    border: none;
+    background: transparent;
+    border-radius: 11px;
+}
+.nav-button:hover, .nav-button.active {
+    background: var(--ungu-muda);
+    color: var(--ungu-tua);
+}
+.main { min-width: 0; padding: 28px; }
+.page { display: none; }
+.page.active { display: block; }
+
+.page-heading { margin-bottom: 22px; }
+.page-heading h2 { margin: 0 0 8px; font-size: 25px; }
+.page-heading p { margin: 0; color: var(--abu); line-height: 1.6; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+.two-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+.card {
+    background: white;
+    padding: 23px;
+    border: 1px solid var(--garis);
+    border-radius: 19px;
+    margin-bottom: 20px;
+    min-width: 0;
+}
+.card h3 { margin: 0 0 16px; font-size: 17px; }
+.stat-label { color: var(--abu); font-size: 14px; margin-bottom: 12px; }
+.stat-number { font-size: 32px; font-weight: bold; color: var(--ungu-tua); }
+
+.field { margin-bottom: 16px; }
+label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+input, select, textarea {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    color: var(--teks);
+    background: white;
+    border: 1px solid #dcd2ef;
+    border-radius: 10px;
+    outline: none;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--ungu);
+}
+textarea { min-height: 100px; resize: vertical; }
+
+.btn {
+    border: none;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: var(--ungu);
+    color: white;
+    font-weight: bold;
+}
+.btn:hover { filter: brightness(.95); }
+.btn-secondary {
+    background: var(--ungu-muda);
+    color: var(--ungu-tua);
+}
+.btn-danger {
+    background: #fff0f2;
+    color: var(--merah);
+}
+.btn-small { padding: 8px 11px; font-size: 13px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+.item {
+    padding: 16px;
+    background: #fcfaff;
+    border: 1px solid var(--garis);
+    border-radius: 13px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+.item-title { font-weight: bold; margin-bottom: 8px; }
+.item p { margin: 6px 0; line-height: 1.6; }
+.item-meta { color: var(--abu); font-size: 13px; }
+.empty {
+    padding: 20px 8px;
+    color: var(--abu);
+    line-height: 1.6;
+    text-align: center;
+}
+.tag {
+    display: inline-block;
+    border-radius: 20px;
+    background: #e2f7ef;
+    color: #27765d;
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-top: 8px;
+}
+.notice {
+    background: #f5f0ff;
+    border-radius: 12px;
+    padding: 15px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+.notice.warning { background: #fff6e7; }
+.notice.success { background: #eaf8f2; }
+.progress-track {
+    height: 10px;
+    background: #e9e1f7;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+.progress-fill {
+    height: 100%;
+    background: var(--ungu);
+    border-radius: 20px;
+}
+.footer-note {
+    color: var(--abu);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--garis);
+        padding: 12px;
+    }
+    .nav-button {
+        width: auto;
+        min-width: max-content;
+        margin: 0;
+    }
+    .main { padding: 20px; }
+    .two-columns { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; gap: 0; }
+    .main { padding: 15px; }
+    .card { padding: 18px; }
+    .app-header { padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HALAMAN LOGIN -->
+<section id="loginPage" class="login-wrap">
+    <div class="login-card">
+        <div class="logo">💜</div>
+        <h1>AI Caregiver Assistant</h1>
+        <p class="muted">Platform pendampingan dan pemantauan pasien stroke.</p>
+
+        <form id="loginForm">
+            <div class="field">
+                <label for="loginName">Nama caregiver</label>
+                <input id="loginName" required placeholder="Masukkan nama kamu">
+            </div>
+            <div class="field">
+                <label for="loginPassword">Kata sandi</label>
+                <input id="loginPassword" type="password" required placeholder="Masukkan kata sandi">
+            </div>
+            <button class="btn" type="submit" style="width:100%">Masuk</button>
+        </form>
+        <p class="footer-note">Mode prototipe: login ini hanya simulasi dan belum menggunakan sistem akun sungguhan.</p>
+    </div>
+</section>
+
+<!-- APLIKASI UTAMA -->
+<div id="appPage" class="hidden">
+    <header class="app-header">
+        <div class="brand">
+            <h1>💜 AI Caregiver Assistant</h1>
+            <p>Pendampingan pasien stroke dengan lebih teratur</p>
+        </div>
+        <button class="btn btn-secondary" id="logoutButton">Keluar</button>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <button class="nav-button active" data-page="dashboard">🏠 Beranda</button>
+            <button class="nav-button" data-page="patients">👤 Data Pasien</button>
+            <button class="nav-button" data-page="observations">📝 Observasi</button>
+            <button class="nav-button" data-page="interpretation">🧠 Interpretasi</button>
+            <button class="nav-button" data-page="recommendations">💜 Rekomendasi</button>
+            <button class="nav-button" data-page="journals">📔 Jurnal Harian</button>
+            <button class="nav-button" data-page="progress">📈 Progress Pemulihan</button>
+        </aside>
+
+        <main class="main">
+
+            <!-- BERANDA -->
+            <section id="dashboard" class="page active">
+                <div class="page-heading">
+                    <h2>Selamat datang, <span id="caregiverGreeting">Caregiver</span>!</h2>
+                    <p>Berikut ringkasan aktivitas pendampingan pasien.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <div class="stat-label">Total pasien</div>
+                        <div class="stat-number" id="totalPatients">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-label">Catatan observasi</div>
+                        <div class="stat-number" id="totalObservations">0</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-label">Jurnal harian</div>
+                        <div class="stat-number" id="totalJournals">0</div>
+                    </div>
+                </div>
+
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>Pasien yang Didampingi</h3>
+                        <div id="dashboardPatients"></div>
+                        <button class="btn" data-goto="patients">+ Tambah Pasien</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Pengingat Pendampingan</h3>
+                        <div class="item">
+                            <div class="item-title">🗣️ Dukungan komunikasi</div>
+                            <p>Gunakan kalimat sederhana dan beri waktu pasien untuk merespons.</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-title">📝 Catat perubahan</div>
+                            <p>Catatan teratur membantu saat berkonsultasi dengan tenaga kesehatan.</p>
+                        </div>
+                        <div class="item">
+                            <div class="item-title">💜 Utamakan keselamatan</div>
+                            <p>Ikuti rencana perawatan yang diberikan tenaga kesehatan.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DATA PASIEN -->
+            <section id="patients" class="page">
+                <div class="page-heading">
+                    <h2>Data Pasien</h2>
+                    <p>Kelola informasi dasar pasien yang sedang didampingi.</p>
+                </div>
+
+                <div class="two-columns">
+                    <div class="card">
+                        <h3 id="patientFormTitle">Tambah Pasien</h3>
+                        <form id="patientForm">
+                            <input type="hidden" id="patientEditId">
+                            <div class="field">
+                                <label for="patientName">Nama pasien</label>
+                                <input id="patientName" required>
+                            </div>
+                            <div class="field">
+                                <label for="patientAge">Usia</label>
+                                <input id="patientAge" type="number" min="1" max="120" required>
+                            </div>
+                            <div class="field">
+                                <label for="patientCondition">Kondisi umum</label>
+                                <select id="patientCondition" required>
+                                    <option value="">Pilih kondisi</option>
+                                    <option>Dalam pemulihan</option>
+                                    <option>Membutuhkan bantuan komunikasi</option>
+                                    <option>Membutuhkan bantuan aktivitas</option>
+                                    <option>Pemantauan rutin</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="patientStatus">Status pendampingan</label>
+                                <select id="patientStatus" required>
+                                    <option>Aktif didampingi</option>
+                                    <option>Pemantauan berkala</option>
+                                </select>
+                            </div>
+                            <button class="btn" type="submit">Simpan Pasien</button>
+                            <button class="btn btn-secondary hidden" type="button" id="cancelPatientEdit">Batal Edit</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Daftar Pasien</h3>
+                        <div id="patientList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- OBSERVASI -->
+            <section id="observations" class="page">
+                <div class="page-heading">
+                    <h2>Observasi Perilaku</h2>
+                    <p>Catat hasil pengamatan selama mendampingi pasien.</p>
+                </div>
+
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>Tambah Observasi</h3>
+                        <form id="observationForm">
+                            <div class="field">
+                                <label for="observationPatient">Nama pasien</label>
+                                <select id="observationPatient" required></select>
+                            </div>
+                            <div class="field">
+                                <label for="observationType">Kategori observasi</label>
+                                <select id="observationType" required>
+                                    <option value="">Pilih kategori</option>
+                                    <option>Komunikasi</option>
+                                    <option>Suasana hati</option>
+                                    <option>Aktivitas harian</option>
+                                    <option>Pola tidur</option>
+                                    <option>Nafsu makan</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="observationLevel">Hasil pengamatan</label>
+                                <select id="observationLevel" required>
+                                    <option value="">Pilih hasil</option>
+                                    <option>Baik atau stabil</option>
+                                    <option>Membutuhkan perhatian</option>
+                                    <option>Mengalami kesulitan</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="observationNote">Catatan detail</label>
+                                <textarea id="observationNote" required placeholder="Ceritakan apa yang kamu amati..."></textarea>
+                            </div>
+                            <button class="btn" type="submit">Simpan Observasi</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Riwayat Observasi</h3>
+                        <div id="observationList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INTERPRETASI -->
+            <section id="interpretation" class="page">
+                <div class="page-heading">
+                    <h2>Interpretasi Observasi</h2>
+                    <p>Ringkasan sederhana berdasarkan catatan pengamatan yang dimasukkan.</p>
+                </div>
+                <div class="card">
+                    <div class="notice warning">
+                        Fitur ini merupakan simulasi interpretasi berbasis aturan, bukan AI medis yang sebenarnya dan bukan alat diagnosis.
+                    </div>
+                    <div class="field">
+                        <label for="interpretationPatient">Pilih pasien</label>
+                        <select id="interpretationPatient"></select>
+                    </div>
+                    <button class="btn" id="analyzeButton">Lihat Interpretasi</button>
+                    <div id="interpretationResult" style="margin-top:20px"></div>
+                </div>
+            </section>
+
+            <!-- REKOMENDASI -->
+            <section id="recommendations" class="page">
+                <div class="page-heading">
+                    <h2>Rekomendasi Pendampingan</h2>
+                    <p>Saran umum untuk mendukung kegiatan pendampingan sehari-hari.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3>🗣️ Komunikasi</h3>
+                        <p class="muted">Gunakan kalimat singkat, berbicara dengan tenang, dan berikan waktu untuk menjawab.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📔 Dokumentasi</h3>
+                        <p class="muted">Catat perubahan perilaku, kegiatan, dan hal yang perlu dikonsultasikan kepada tenaga kesehatan.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ Keselamatan</h3>
+                        <p class="muted">Ikuti rencana perawatan dan mintalah bantuan tenaga kesehatan jika ada perubahan kondisi.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🤝 Dukungan</h3>
+                        <p class="muted">Libatkan pasien dalam kegiatan sesuai kemampuan dan arahan tenaga kesehatan.</p>
+                    </div>
+                    <div class="card">
+                        <h3>⏰ Rutinitas</h3>
+                        <p class="muted">Buat jadwal kegiatan yang teratur sesuai kebutuhan dan rencana perawatan pasien.</p>
+                    </div>
+                    <div class="card">
+                        <h3>💜 Pendamping</h3>
+                        <p class="muted">Jaga kondisi diri sendiri dan mintalah bantuan saat tugas pendampingan terasa berat.</p>
+                    </div>
+                </div>
+                <p class="footer-note">Saran umum ini tidak menggantikan instruksi dokter atau tenaga kesehatan.</p>
+            </section>
+
+            <!-- JURNAL -->
+            <section id="journals" class="page">
+                <div class="page-heading">
+                    <h2>Jurnal Harian</h2>
+                    <p>Dokumentasikan aktivitas dan perkembangan pasien setiap hari.</p>
+                </div>
+
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>Tambah Jurnal</h3>
+                        <form id="journalForm">
+                            <div class="field">
+                                <label for="journalPatient">Nama pasien</label>
+                                <select id="journalPatient" required></select>
+                            </div>
+                            <div class="field">
+                                <label for="journalDate">Tanggal</label>
+                                <input id="journalDate" type="date" required>
+                            </div>
+                            <div class="field">
+                                <label for="journalActivity">Aktivitas harian</label>
+                                <textarea id="journalActivity" required placeholder="Tuliskan aktivitas pasien..."></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="journalNote">Catatan tambahan</label>
+                                <textarea id="journalNote" placeholder="Catatan lain jika ada..."></textarea>
+                            </div>
+                            <button class="btn" type="submit">Simpan Jurnal</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Riwayat Jurnal</h3>
+                        <div id="journalList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROGRESS -->
+            <section id="progress" class="page">
+                <div class="page-heading">
+                    <h2>Progress Pemulihan</h2>
+                    <p>Catat perkembangan aktivitas pasien berdasarkan pengamatan pendamping.</p>
+                </div>
+
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>Tambah Catatan Progress</h3>
+                        <form id="progressForm">
+                            <div class="field">
+                                <label for="progressPatient">Nama pasien</label>
+                                <select id="progressPatient" required></select>
+                            </div>
+                            <div class="field">
+                                <label for="progressDate">Tanggal</label>
+                                <input id="progressDate" type="date" required>
+                            </div>
+                            <div class="field">
+                                <label for="progressScore">Penilaian perkembangan (0–100)</label>
+                                <input id="progressScore" type="number" min="0" max="100" required>
+                            </div>
+                            <div class="field">
+                                <label for="progressNote">Catatan perkembangan</label>
+                                <textarea id="progressNote" required placeholder="Tuliskan perkembangan yang diamati..."></textarea>
+                            </div>
+                            <button class="btn" type="submit">Simpan Progress</button>
+                        </form>
+                        <p class="footer-note">Angka ini hanya catatan pendamping, bukan ukuran klinis pemulihan.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Riwayat Progress</h3>
+                        <div class="field">
+                            <label for="progressFilter">Filter pasien</label>
+                            <select id="progressFilter"></select>
+                        </div>
+                        <div id="progressList"></div>
+                    </div>
+                </div>
+            </section>
+
+            <p class="footer-note">
+                Prototipe akademik. Data tersimpan pada browser yang digunakan dan belum tersinkron ke server.
+                Hindari memasukkan informasi medis yang sangat sensitif.
+            </p>
+        </main>
+    </div>
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    var STORAGE_KEY = "aiCaregiverPrototypeV2";
+    var state = {
+        caregiver: "",
+        patients: [],
+        observations: [],
+        journals: [],
+        progress: []
+    };
+
+    function byId(id) {
+        return document.getElementById(id);
+    }
+
+    function makeId() {
+        return String(Date.now()) + String(Math.floor(Math.random() * 100000));
+    }
+
+    function today() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (error) {
+            alert("Data tidak dapat disimpan. Periksa pengaturan penyimpanan browser.");
+        }
+    }
+
+    function loadState() {
+        try {
+            var saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                var parsed = JSON.parse(saved);
+                state.caregiver = parsed.caregiver || "";
+                state.patients = Array.isArray(parsed.patients) ? parsed.patients : [];
+                state.observations = Array.isArray(parsed.observations) ? parsed.observations : [];
+                state.journals = Array.isArray(parsed.journals) ? parsed.journals : [];
+                state.progress = Array.isArray(parsed.progress) ? parsed.progress : [];
+            }
+        } catch (error) {
+            alert("Data tersimpan tidak dapat dibaca. Data baru akan digunakan.");
+        }
+    }
+
+    function textElement(tag, text, className) {
+        var element = document.createElement(tag);
+        element.textContent = text;
+        if (className) element.className = className;
+        return element;
+    }
+
+    function clearElement(element) {
+        element.replaceChildren();
+    }
+
+    function emptyMessage(element, message) {
+        clearElement(element);
+        element.appendChild(textElement("p", message, "empty"));
+    }
+
+    function addParagraph(container, text, className) {
+        container.appendChild(textElement("p", text, className || ""));
+    }
+
+    function addButton(container, label, className, action) {
+        var button = textElement("button", label, "btn btn-small " + (className || ""));
+        button.type = "button";
+        button.addEventListener("click", action);
+        container.appendChild(button);
+    }
+
+    function findPatient(patientId) {
+        return state.patients.find(function (patient) {
+            return patient.id === patientId;
+        });
+    }
+
+    function patientName(patientId) {
+        var patient = findPatient(patientId);
+        return patient ? patient.name : "Pasien tidak ditemukan";
+    }
+
+    function makeItem(title, lines) {
+        var item = document.createElement("div");
+        item.className = "item";
+        item.appendChild(textElement("div", title, "item-title"));
+
+        lines.forEach(function (line) {
+            addParagraph(item, line.text, line.className || "");
+        });
+
+        return item;
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll(".page").forEach(function (page) {
+            page.classList.toggle("active", page.id === pageId);
+        });
+
+        document.querySelectorAll(".nav-button").forEach(function (button) {
+            button.classList.toggle("active", button.getAttribute("data-page") === pageId);
+        });
+
+        if (pageId === "interpretation") renderInterpretation();
+    }
+
+    function updateSelect(selectId, includeAll) {
+        var select = byId(selectId);
+        var oldValue = select.value;
+        clearElement(select);
+
+        var first = document.createElement("option");
+        first.value = "";
+        first.textContent = includeAll ? "Semua pasien" : "Pilih pasien";
+        select.appendChild(first);
+
+        state.patients.forEach(function (patient) {
+            var option = document.createElement("option");
+            option.value = patient.id;
+            option.textContent = patient.name;
+            select.appendChild(option);
+        });
+
+        if (state.patients.some(function (patient) { return patient.id === oldValue; })) {
+            select.value = oldValue;
+        }
+    }
+
+    function updateAllSelects() {
+        updateSelect("observationPatient", false);
+        updateSelect("journalPatient", false);
+        updateSelect("progressPatient", false);
+        updateSelect("interpretationPatient", false);
+        updateSelect("progressFilter", true);
+    }
+
+    function renderPatientList() {
+        var list = byId("patientList");
+        var dashboard = byId("dashboardPatients");
+        clearElement(list);
+        clearElement(dashboard);
+
+        if (state.patients.length === 0) {
+            emptyMessage(list, "Belum ada pasien. Tambahkan data pasien terlebih dahulu.");
+            emptyMessage(dashboard, "Belum ada data pasien.");
+            return;
+        }
+
+        state.patients.forEach(function (patient) {
+            var item = makeItem(patient.name, [
+                { text: "Usia: " + patient.age + " tahun" },
+                { text: "Kondisi: " + patient.condition },
+                { text: "Status: " + patient.status, className: "item-meta" }
+            ]);
+
+            var actions = document.createElement("div");
+            actions.className = "actions";
+
+            addButton(actions, "Edit", "btn-secondary", function () {
+                byId("patientEditId").value = patient.id;
+                byId("patientName").value = patient.name;
+                byId("patientAge").value = patient.age;
+                byId("patientCondition").value = patient.condition;
+                byId("patientStatus").value = patient.status;
+                byId("patientFormTitle").textContent = "Edit Data Pasien";
+                byId("cancelPatientEdit").classList.remove("hidden");
+                showPage("patients");
+                byId("patientName").focus();
+            });
+
+            addButton(actions, "Hapus", "btn-danger", function () {
+                if (!confirm("Hapus data pasien ini beserta seluruh catatan terkait?")) return;
+
+                state.patients = state.patients.filter(function (p) { return p.id !== patient.id; });
+                state.observations = state.observations.filter(function (o) { return o.patientId !== patient.id; });
+                state.journals = state.journals.filter(function (j) { return j.patientId !== patient.id; });
+                state.progress = state.progress.filter(function (p) { return p.patientId !== patient.id; });
+
+                saveState();
+                renderAll();
+            });
+
+            item.appendChild(actions);
+            list.appendChild(item);
+
+            var summary = makeItem(patient.name, [
+                { text: patient.age + " tahun" },
+                { text: patient.condition }
+            ]);
+            dashboard.appendChild(summary);
+        });
+    }
+
+    function resetPatientForm() {
+        byId("patientForm").reset();
+        byId("patientEditId").value = "";
+        byId("patientFormTitle").textContent = "Tambah Pasien";
+        byId("cancelPatientEdit").classList.add("hidden");
+    }
+
+    byId("patientForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var name = byId("patientName").value.trim();
+        var age = Number(byId("patientAge").value);
+
+        if (!name || age < 1 || age > 120) {
+            alert("Periksa kembali nama dan usia pasien.");
+            return;
+        }
+
+        var editId = byId("patientEditId").value;
+        var existing = editId ? findPatient(editId) : null;
+
+        if (existing) {
+            existing.name = name;
+            existing.age = age;
+            existing.condition = byId("patientCondition").value;
+            existing.status = byId("patientStatus").value;
+        } else {
+            state.patients.push({
+                id: makeId(),
+                name: name,
+                age: age,
+                condition: byId("patientCondition").value,
+                status: byId("patientStatus").value
+            });
+        }
+
+        saveState();
+        resetPatientForm();
+        renderAll();
+        alert(existing ? "Data pasien berhasil diperbarui." : "Data pasien berhasil ditambahkan.");
+    });
+
+    byId("cancelPatientEdit").addEventListener("click", resetPatientForm);
+
+    function renderObservations() {
+        var list = byId("observationList");
+        clearElement(list);
+
+        if (state.observations.length === 0) {
+            emptyMessage(list, "Belum ada catatan observasi.");
+            return;
+        }
+
+        state.observations.slice().reverse().forEach(function (observation) {
+            var item = makeItem(patientName(observation.patientId) + " — " + observation.type, [
+                { text: "Hasil: " + observation.level },
+                { text: observation.note },
+                { text: "Tanggal: " + observation.date, className: "item-meta" }
+            ]);
+
+            var actions = document.createElement("div");
+            actions.className = "actions";
+            addButton(actions, "Hapus", "btn-danger", function () {
+                if (!confirm("Hapus catatan observasi ini?")) return;
+                state.observations = state.observations.filter(function (o) {
+                    return o.id !== observation.id;
+                });
+                saveState();
+                renderAll();
+            });
+
+            item.appendChild(actions);
+            list.appendChild(item);
+        });
+    }
+
+    byId("observationForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!findPatient(byId("observationPatient").value)) {
+            alert("Tambahkan pasien terlebih dahulu.");
+            return;
+        }
+
+        state.observations.push({
+            id: makeId(),
+            patientId: byId("observationPatient").value,
+            type: byId("observationType").value,
+            level: byId("observationLevel").value,
+            note: byId("observationNote").value.trim(),
+            date: today()
+        });
+
+        saveState();
+        this.reset();
+        renderAll();
+        alert("Observasi berhasil disimpan.");
+    });
+
+    function renderInterpretation() {
+        var result = byId("interpretationResult");
+        clearElement(result);
+
+        var patientId = byId("interpretationPatient").value;
+
+        if (!patientId) {
+            emptyMessage(result, "Pilih pasien untuk melihat ringkasan observasi.");
+            return;
+        }
+
+        var records = state.observations.filter(function (observation) {
+            return observation.patientId === patientId;
+        });
+
+        if (records.length === 0) {
+            emptyMessage(result, "Belum ada observasi untuk pasien ini. Tambahkan catatan observasi terlebih dahulu.");
+            return;
+        }
+
+        var summary = document.createElement("div");
+        summary.className = "notice";
+        summary.appendChild(textElement("strong", "Ringkasan observasi untuk " + patientName(patientId)));
+        addParagraph(summary, "Jumlah catatan: " + records.length);
+        result.appendChild(summary);
+
+        records.slice().reverse().forEach(function (record) {
+            var explanation = "";
+
+            if (record.level === "Baik atau stabil") {
+                explanation = "Catatan menunjukkan kondisi yang dinilai stabil pada pengamatan ini. Lanjutkan pendampingan sesuai rencana tenaga kesehatan.";
+            } else if (record.level === "Membutuhkan perhatian") {
+                explanation = "Catatan menunjukkan hal yang perlu dipantau lebih lanjut. Dokumentasikan perubahan dan konsultasikan bila diperlukan.";
+            } else {
+                explanation = "Catatan menunjukkan adanya kesulitan yang diamati. Diskusikan dengan tenaga kesehatan untuk menentukan tindak lanjut yang tepat.";
+            }
+
+            result.appendChild(makeItem(record.type + " — " + record.date, [
+                { text: "Hasil pengamatan: " + record.level },
+                { text: "Catatan: " + record.note },
+                { text: explanation }
+            ]));
+        });
+
+        var warning = document.createElement("div");
+        warning.className = "notice warning";
+        warning.textContent = "Ringkasan ini dibuat menggunakan aturan sederhana berdasarkan pilihan dan catatan caregiver. Ini bukan diagnosis, prediksi medis, atau hasil dari model AI sungguhan.";
+        result.appendChild(warning);
+    }
+
+    byId("analyzeButton").addEventListener("click", renderInterpretation);
+    byId("interpretationPatient").addEventListener("change", renderInterpretation);
+
+    function renderJournals() {
+        var list = byId("journalList");
+        clearElement(list);
+
+        if (state.journals.length === 0) {
+            emptyMessage(list, "Belum ada jurnal harian.");
+            return;
+        }
+
+        state.journals.slice().reverse().forEach(function (journal) {
+            var item = makeItem(patientName(journal.patientId) + " — " + journal.date, [
+                { text: "Aktivitas: " + journal.activity },
+                { text: "Catatan tambahan: " + (journal.note || "Tidak ada catatan tambahan.") }
+            ]);
+
+            var actions = document.createElement("div");
+            actions.className = "actions";
+
+            addButton(actions, "Hapus", "btn-danger", function () {
+                if (!confirm("Hapus jurnal ini?")) return;
+                state.journals = state.journals.filter(function (j) { return j.id !== journal.id; });
+                saveState();
+                renderAll();
+            });
+
+            item.appendChild(actions);
+            list.appendChild(item);
+        });
+    }
+
+    byId("journalForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!findPatient(byId("journalPatient").value)) {
+            alert("Tambahkan pasien terlebih dahulu.");
+            return;
+        }
+
+        state.journals.push({
+            id: makeId(),
+            patientId: byId("journalPatient").value,
+            date: byId("journalDate").value,
+            activity: byId("journalActivity").value.trim(),
+            note: byId("journalNote").value.trim()
+        });
+
+        saveState();
+        this.reset();
+        byId("journalDate").value = today();
+        renderAll();
+        alert("Jurnal harian berhasil disimpan.");
+    });
+
+    function renderProgress() {
+        var list = byId("progressList");
+        var filter = byId("progressFilter").value;
+        clearElement(list);
+
+        var records = state.progress.filter(function (record) {
+            return !filter || record.patientId === filter;
+        });
+
+        if (records.length === 0) {
+            emptyMessage(list, "Belum ada catatan progress untuk pilihan ini.");
+            return;
+        }
+
+        records.slice().reverse().forEach(function (record) {
+            var item = makeItem(patientName(record.patientId), [
+                { text: "Tanggal: " + record.date },
+                { text: "Nilai catatan perkembangan: " + record.score + " dari 100" },
+                { text: record.note }
+            ]);
+
+            var track = document.createElement("div");
+            track.className = "progress-track";
+
+            var fill = document.createElement("div");
+            fill.className = "progress-fill";
+            fill.style.width = record.score + "%";
+            track.appendChild(fill);
+            item.appendChild(track);
+
+            var actions = document.createElement("div");
+            actions.className = "actions";
+            addButton(actions, "Hapus", "btn-danger", function () {
+                if (!confirm("Hapus catatan progress ini?")) return;
+                state.progress = state.progress.filter(function (p) { return p.id !== record.id; });
+                saveState();
+                renderAll();
+            });
+            item.appendChild(actions);
+            list.appendChild(item);
+        });
+    }
+
+    byId("progressForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!findPatient(byId("progressPatient").value)) {
+            alert("Tambahkan pasien terlebih dahulu.");
+            return;
+        }
+
+        var score = Number(byId("progressScore").value);
+        if (score < 0 || score > 100) {
+            alert("Masukkan nilai antara 0 sampai 100.");
+            return;
+        }
+
+        state.progress.push({
+            id: makeId(),
+            patientId: byId("progressPatient").value,
+            date: byId("progressDate").value,
+            score: score,
+            note: byId("progressNote").value.trim()
+        });
+
+        saveState();
+        this.reset();
+        byId("progressDate").value = today();
+        renderAll();
+        alert("Catatan progress berhasil disimpan.");
+    });
+
+    byId("progressFilter").addEventListener("change", renderProgress);
+
+    function renderAll() {
+        byId("totalPatients").textContent = state.patients.length;
+        byId("totalObservations").textContent = state.observations.length;
+        byId("totalJournals").textContent = state.journals.length;
+
+        renderPatientList();
+        updateAllSelects();
+        renderObservations();
+        renderJournals();
+        renderProgress();
+        renderInterpretation();
+    }
+
+    byId("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var name = byId("loginName").value.trim();
+        var password = byId("loginPassword").value;
+
+        if (!name || !password) {
+            alert("Isi nama dan kata sandi terlebih dahulu.");
+            return;
+        }
+
+        state.caregiver = name;
+        saveState();
+        byId("caregiverGreeting").textContent = name;
+        byId("loginPage").classList.add("hidden");
+        byId("appPage").classList.remove("hidden");
+        renderAll();
+    });
+
+    byId("logoutButton").addEventListener("click", function () {
+        byId("appPage").classList.add("hidden");
+        byId("loginPage").classList.remove("hidden");
+        byId("loginPassword").value = "";
+    });
+
+    document.querySelectorAll(".nav-button").forEach(function (button) {
+        button.addEventListener("click", function () {
+            showPage(button.getAttribute("data-page"));
+        });
+    });
+
+    document.querySelectorAll("[data-goto]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            showPage(button.getAttribute("data-goto"));
+        });
+    });
+
+    loadState();
+
+    byId("journalDate").value = today();
+    byId("progressDate").value = today();
+    byId("loginName").value = state.caregiver;
+
+    if (state.caregiver) {
+        byId("caregiverGreeting").textContent = state.caregiver;
+        byId("loginPage").classList.add("hidden");
+        byId("appPage").classList.remove("hidden");
+    }
+
+    renderAll();
+})();
+</script>
+
+</body>
+</html>
