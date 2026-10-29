@@ -8,7 +8,7 @@ Prototype of AI Caregiver Assistant for Stroke Patients — IPPL Project.
 ## 📖 Deskripsi Proyek
 AI Caregiver Assistant adalah platform berbasis web yang dirancang untuk mendigitalkan proses pendampingan pasien stroke. Sistem ini memfasilitasi kolaborasi antara manajemen (President & Coordinator), tenaga pendamping (Caregiver), dan Admin untuk memastikan kualitas perawatan pasien stroke tetap optimal melalui bantuan *Artificial Intelligence* (AI).
 
-## ✨ Fitur Utama (Berdasarkan Use Case Diagram)
+## ✨ Fitur Utama
 
 Sistem ini memiliki 4 Aktor utama dengan hak akses dan fitur masing-masing:
 
